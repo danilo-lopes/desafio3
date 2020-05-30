@@ -1,0 +1,32 @@
+---
+- name: Installing MySQL Database
+  yum:
+    name: mysql-server
+    state: present
+
+- name: Installing MySQL-python lib
+  yum:
+    name: MySQL-python
+    state: present
+
+- name: Enabling MySql Service
+  service:
+    name: mysqld
+    enabled: yes
+
+- name: start mysql
+  service:
+    name: mysqld
+    state: started
+
+- name: Creating wordpress database
+  mysql_db:
+    name: wordpress
+    state: present
+
+- name: Creting wordpress database user
+  mysql_user:
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
+    priv: '*.*:ALL'
+    state: present

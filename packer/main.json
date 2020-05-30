@@ -1,0 +1,62 @@
+{
+  "builders": [
+    {
+      "access_key": "{{user `AWS_ACCESS_KEY`}}",
+      "secret_key": "{{user `AWS_SECRET_KEY`}}",
+      "type": "amazon-ebs",
+      "ami_name": "wordpress {{timestamp}}",
+      "tags": {
+        "Name": "wordpress-latest"
+      },
+      "instance_type": "t2.micro",
+      "region": "{{user `AWS_REGION`}}",
+
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "CentOS Linux 7 x86_64 HVM EBS ENA*",
+          "root-device-type": "ebs",
+          "product-code": "aw0evgkw8e5c1q413zgy5pjce"
+
+        },
+        "owners": ["679593333241"],
+        "most_recent": true
+      },
+      "ssh_username": "centos"
+    }
+  ],
+
+  "_comment": "Running Ansible roles on the image",
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/install-ansible.sh"
+    },
+
+    {
+      "type": "ansible-local",
+      "playbook_file": "../ansible/main.yml",
+      "role_paths": [
+        "../ansible/roles/dependencies",
+        "../ansible/roles/php-fpm",
+        "../ansible/roles/database",
+        "../ansible/roles/nginx",
+        "../ansible/roles/wordpress"
+      ],
+      "group_vars": "../ansible/group_vars"
+    },
+
+    {
+      "type": "shell",
+      "script": "scripts/clean-up.sh"
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
+    }
+  ]
+}

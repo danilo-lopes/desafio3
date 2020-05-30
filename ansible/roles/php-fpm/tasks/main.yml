@@ -1,0 +1,26 @@
+---
+- name: Installing PHP 7.4
+  yum:
+    name: php
+    state: present
+
+- name: Installing PHP-MySqlND
+  yum:
+    name: php-mysqlnd
+    state: present
+
+- name: Installing PHP-FPM 7.4
+  yum:
+    name: php-fpm
+    state: present
+
+- name: Disabling default PHP-FPM configuration file
+  command: mv /etc/php-fpm.d/www.conf /etc/php-fpm.d/www.conf.ORIG
+
+- name: Setting Blog PHP-FPM configuration file
+  template:
+    src: blog.conf
+    dest: /etc/php-fpm.d/
+  notify:
+    - enable php-fpm
+    - reload php-fpm

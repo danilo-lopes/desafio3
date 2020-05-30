@@ -1,0 +1,16 @@
+---
+- name: Downloading wordpress latest
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: /var/www
+    remote_src: yes
+    owner: nginx
+
+- name: Setting up wordpress configuration file
+  template:
+    src: wp-config.php
+    dest: /var/www/wordpress
+    owner: nginx
+  notify:
+    - restart nginx
+    - restart php-fpm

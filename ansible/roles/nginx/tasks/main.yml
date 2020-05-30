@@ -1,0 +1,31 @@
+---
+- name: Installing Nginx
+  yum:
+    name: nginx
+    state: present
+
+- name: Creating Nginx directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+  with_items:
+    - /etc/nginx/sites-enabled
+
+- name: Disabling Nginx default config file
+  command: mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.ORIG
+
+- name: Setting Nginx configuration file
+  template:
+    src: nginx.conf
+    dest: /etc/nginx
+
+- name: Setting blogbiqueirabr Nginx servier block
+  template:
+    src: blogbiqueirabr.conf
+    dest: /etc/nginx/sites-enabled
+  notify:
+    - enable nginx
+    - reload nginx

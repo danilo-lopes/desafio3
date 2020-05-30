@@ -1,0 +1,7 @@
+---
+- name: Installing REMI repo
+  shell: >
+    yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y && \
+    yum --disablerepo="*" --enablerepo="remi-safe" list php[7-9][0-9].x86_64 && \
+    yum-config-manager --enable remi-php74 && \
+    yum install http://repo.mysql.com/mysql-community-release-el7-7.noarch.rpm -y
